@@ -1,0 +1,134 @@
+<?php
+
+namespace B2B\BulkOrdering;
+
+if (!defined('ABSPATH')) {
+    exit;
+}
+
+class B2B_Cart_Handler
+{
+    public function handle()
+    {
+        if (!$this->verify_nonce('b2b_bulk_order', $_POST['nonce'] ?? '')) {
+            $this->respond_nonce_error('b2b_bulk_order', $_POST['nonce'] ?? 'none');
+        }
+
+        $items = isset($_POST['items']) ? (array) $_POST['items'] : [];
+
+        if (empty($items)) {
+            wp_send_json_error(['message' => __('No items to add.', 'bulk-ordering')]);
+        }
+
+        $this->clear_cart(); // ✅ Clear existing cart before adding new items
+
+        $errors = $this->process_cart_items($items);
+
+        if (!empty($errors)) {
+            wp_send_json_error([
+                'message' => __('Some products could not be added.', 'bulk-ordering'),
+                'failed' => $errors,
+            ]);
+        }
+
+        wp_send_json_success(['message' => __('All products added to cart.', 'bulk-ordering')]);
+    }
+
+    private function clear_cart(): void
+    {
+        WC()->cart->empty_cart();
+    }
+
+    private function process_cart_items(array $items): array
+    {
+        $errors = [];
+
+        foreach ($items as $item) {
+            $product_id = isset($item['product_id']) ? absint($item['product_id']) : 0;
+            $quantity = isset($item['quantity']) ? absint($item['quantity']) : 0;
+            $variation_id = isset($item['variation_id']) ? absint($item['variation_id']) : 0;
+            $attributes = isset($item['attributes']) ? (array) $item['attributes'] : [];
+
+            if ($quantity <= 0 || $product_id <= 0) {
+                continue;
+            }
+
+            $added = ($variation_id > 0)
+                ? WC()->cart->add_to_cart($product_id, $quantity, $variation_id, $attributes)
+                : WC()->cart->add_to_cart($product_id, $quantity);
+
+            if (!$added) {
+                $errors[] = $product_id;
+            }
+        }
+
+        return $errors;
+    }
+
+    public static function register_ajax_hooks()
+    {
+        add_action('wp_ajax_b2b_filter_products', [self::class, 'ajax_filter_products']);
+        add_action('wp_ajax_nopriv_b2b_filter_products', [self::class, 'ajax_filter_products']);
+    }
+
+    public static function ajax_filter_products()
+    {
+        if (!(new self())->verify_nonce('b2b_filter_nonce', $_POST['nonce'] ?? '')) {
+            (new self())->respond_nonce_error('b2b_filter_nonce', $_POST['nonce'] ?? 'none');
+        }
+
+        $cat = isset($_POST['product_cat']) ? sanitize_text_field($_POST['product_cat']) : '';
+        $tag = isset($_POST['product_tag']) ? sanitize_text_field($_POST['product_tag']) : '';
+
+        try {
+            $query = new B2B_Product_Query($cat, $tag);
+            $loop = $query->get_query();
+
+            $html = self::render_product_loop($loop);
+            wp_send_json_success(['html' => $html]);
+        } catch (\Throwable $e) {
+            error_log("❌ AJAX filter fatal error: " . $e->getMessage());
+            // wp_send_json_error(['message' => __('Server error while filtering products.', 'bulk-ordering')]);
+        }
+    }
+
+    private static function render_product_loop($loop): string
+    {
+        ob_start();
+
+        if ($loop->have_posts()) {
+            while ($loop->have_posts()) {
+                $loop->the_post();
+                global $product;
+
+                $partial_path = plugin_dir_path(__DIR__) . '/../templates/partials/product-item.php';
+
+                if (file_exists($partial_path)) {
+                    include $partial_path;
+                } else {
+                    error_log("❌ Missing partial: $partial_path");
+                    echo '<p>' . esc_html__('Template error.', 'bulk-ordering') . '</p>';
+                }
+            }
+            wp_reset_postdata();
+        } else {
+            echo '<p>' . esc_html__('No products found.', 'bulk-ordering') . '</p>';
+        }
+
+        return ob_get_clean();
+    }
+
+    private function verify_nonce(string $action, string $received_nonce): bool
+    {
+        return wp_verify_nonce($received_nonce, $action);
+    }
+
+    private function respond_nonce_error(string $action, string $received): void
+    {
+        wp_send_json_error([
+            'message' => __('Invalid security token.', 'bulk-ordering'),
+            'debug_nonce_received' => $received,
+            'debug_nonce_expected' => '🔐 (Value not shown to avoid confusion)',
+        ]);
+    }
+}
