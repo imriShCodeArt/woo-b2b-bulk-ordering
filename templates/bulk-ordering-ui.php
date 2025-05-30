@@ -19,11 +19,16 @@ use B2B\BulkOrdering\B2B_Product_Query;
     $categories = get_terms(['taxonomy' => 'product_cat', 'hide_empty' => true]);
     $current_cat = isset($_GET['product_cat']) ? sanitize_text_field($_GET['product_cat']) : '';
 
-    include plugin_dir_path(__FILE__) . 'partials/filter-form.php';
+    $filter_form = plugin_dir_path(__FILE__) . 'partials/filter-form.php';
+    if (file_exists($filter_form)) {
+        include $filter_form;
+    } else {
+        error_log('❌ Missing filter-form partial: ' . $filter_form);
+    }
     ?>
 
     <!-- 🛒 Bulk Add Form -->
-    <form id="b2b-bulk-ordering-form">
+    <form id="b2b-bulk-ordering-form" aria-label="<?php esc_attr_e('Bulk Ordering Form', 'bulk-ordering'); ?>">
         <div id="b2b-product-list-wrapper">
             <div class="b2b-product-list">
                 <?php
@@ -31,22 +36,28 @@ use B2B\BulkOrdering\B2B_Product_Query;
 
                 if (!empty($all_products)):
                     foreach ($all_products as $product):
-                        setup_postdata($product);
-                        include plugin_dir_path(__FILE__) . 'partials/product-item.php';
+                        if (!$product instanceof \WC_Product) {
+                            continue;
+                        }
+
+                        $item_template = plugin_dir_path(__FILE__) . 'partials/product-item.php';
+                        if (file_exists($item_template)) {
+                            include $item_template;
+                        } else {
+                            error_log('❌ Missing product-item partial: ' . $item_template);
+                        }
                     endforeach;
-                    wp_reset_postdata();
-                else:
-                    echo '<p>' . esc_html__('No products found.', 'bulk-ordering') . '</p>';
                 endif;
+
                 ?>
             </div>
         </div>
 
         <div class="b2b-submit-fixed-wrapper">
-            <button type="submit" class="b2b-submit-button">
-                <?php esc_html_e('🛒 Add Selected to Cart', 'bulk-ordering'); ?>
+            <button type="submit" class="b2b-submit-button"
+                aria-label="<?php esc_attr_e('Add selected products to cart', 'bulk-ordering'); ?>">
+                <?php echo esc_html__('🛒 Add Selected to Cart', 'bulk-ordering'); ?>
             </button>
         </div>
-
     </form>
 </div>

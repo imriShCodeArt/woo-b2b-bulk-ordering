@@ -2,7 +2,7 @@
 /**
  * Plugin Name:       WooCommerce B2B Bulk Ordering
  * Description:       A streamlined bulk ordering and product browsing interface for B2B customers using WooCommerce.
- * Version:           1.0.0
+ * Version:           1.0.2
  * Author:            M.L Web Solutions
  * Author URI:        https://clients.libiserv.co.il/
  * Text Domain:       bulk-ordering
@@ -33,6 +33,12 @@ function b2b_bulk_ordering_init()
         add_action('admin_notices', function () {
             echo '<div class="notice notice-error"><p><strong>WooCommerce B2B Bulk Ordering</strong> requires WooCommerce to be active.</p></div>';
         });
+
+        // Optional: log for headless or CLI debugging
+        if (defined('WP_DEBUG') && WP_DEBUG) {
+            error_log('[Woo B2B Bulk Ordering] WooCommerce is not active.');
+        }
+
         return;
     }
 
@@ -47,3 +53,17 @@ function b2b_bulk_ordering_load_textdomain()
     load_plugin_textdomain('bulk-ordering', false, dirname(B2B_PLUGIN_BASENAME) . '/languages');
 }
 add_action('init', 'b2b_bulk_ordering_load_textdomain');
+
+// ✅ Register plugin activation hook
+function b2b_bulk_ordering_activate()
+{
+    // Future: add activation logic like DB setup, options init, etc.
+}
+register_activation_hook(__FILE__, 'b2b_bulk_ordering_activate');
+
+// ✅ Register plugin deactivation hook (optional)
+function b2b_bulk_ordering_deactivate()
+{
+    // Future: cleanup tasks if needed
+}
+register_deactivation_hook(__FILE__, 'b2b_bulk_ordering_deactivate');

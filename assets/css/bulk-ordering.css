@@ -1,3 +1,4 @@
+/* #region 🔲 Layout Wrapper */
 #b2b-bulk-ordering {
   padding: 1rem;
   background-color: #fff;
@@ -6,7 +7,9 @@
   max-width: 1000px;
   margin: 0 auto;
 }
+/* #endregion */
 
+/* #region 🧰 Filter Form */
 .b2b-filter-form {
   margin-bottom: 1.5rem;
   display: flex;
@@ -19,7 +22,9 @@
   padding: 0.4rem 0.6rem;
   font-size: 1rem;
 }
+/* #endregion */
 
+/* #region 📦 Product List */
 .b2b-product-list {
   display: flex;
   flex-direction: column;
@@ -38,7 +43,9 @@
   font-weight: 600;
   font-size: 1.1rem;
 }
+/* #endregion */
 
+/* #region 🔘 Inputs and Selects */
 .b2b-variation-select-wrapper select,
 .b2b-quantity-input {
   padding: 0.4rem;
@@ -46,7 +53,9 @@
   width: 100%;
   max-width: 300px;
 }
+/* #endregion */
 
+/* #region 🚀 Submit Button */
 .b2b-submit-button {
   margin-top: 2rem;
   background-color: #0073aa;
@@ -64,6 +73,15 @@
   background-color: #005d8f;
 }
 
+.b2b-submit-button:focus,
+.b2b-filter-form select:focus,
+.b2b-quantity-input:focus {
+  outline: 2px solid #0073aa;
+  outline-offset: 2px;
+}
+/* #endregion */
+
+/* #region 🧩 Responsive Layout (≥ 640px) */
 @media (min-width: 640px) {
   .b2b-product {
     flex-direction: row;
@@ -81,7 +99,18 @@
     flex-shrink: 0;
   }
 }
+/* #endregion */
 
+/* #region 📱 Mobile Padding (≤ 639px) */
+@media (max-width: 639px) {
+  .b2b-product {
+    padding-left: 0.5rem;
+    padding-right: 0.5rem;
+  }
+}
+/* #endregion */
+
+/* #region 📌 Sticky Submit Wrapper */
 .b2b-submit-fixed-wrapper {
   position: sticky;
   bottom: 0;
@@ -94,7 +123,7 @@
   text-align: center;
 }
 
-.b2b-submit-button {
+.b2b-submit-fixed-wrapper .b2b-submit-button {
   font-size: 1.2rem;
   padding: 0.75rem 2rem;
   background-color: #0071a1;
@@ -104,6 +133,7 @@
   cursor: pointer;
 }
 
-.b2b-submit-button:hover {
+.b2b-submit-fixed-wrapper .b2b-submit-button:hover {
   background-color: #005f87;
 }
+/* #endregion */
