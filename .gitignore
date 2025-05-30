@@ -1,0 +1,34 @@
+# Node dependencies (if using build tools like Webpack, Vite, etc.)
+node_modules/
+dist/
+build/
+
+# PHP IDE config
+.idea/
+*.iml
+
+# Mac & system files
+.DS_Store
+Thumbs.db
+
+# Logs & temporary files
+*.log
+*.tmp
+*.bak
+
+# OS-specific temp
+ehthumbs.db
+Desktop.ini
+
+# WordPress-specific
+wp-content/plugins/woo-b2b-bulk-ordering/vendor/     # If using Composer locally
+wp-content/plugins/woo-b2b-bulk-ordering/composer.lock
+wp-content/plugins/woo-b2b-bulk-ordering/package-lock.json
+wp-content/plugins/woo-b2b-bulk-ordering/yarn.lock
+
+# Plugin zip files
+*.zip
+
+# Vite/Parcel outputs (if used)
+.vite/
+.cache/
