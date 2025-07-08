@@ -29,9 +29,9 @@ class B2B_Cart_Handler
             wp_send_json_error(['message' => __('No items to add.', 'bulk-ordering')]);
         }
 
-        $this->clear_cart(); // ✅ Clear existing cart before adding new items
+        $this->clear_cart();
 
-        $errors = $this->process_cart_items($items);
+        [$errors, $added_names] = $this->process_cart_items($items);
 
         if (!empty($errors)) {
             wp_send_json_error([
@@ -40,8 +40,13 @@ class B2B_Cart_Handler
             ]);
         }
 
-        wp_send_json_success(['message' => __('All products added to cart.', 'bulk-ordering')]);
+        wp_send_json_success([
+            'message'  => __('All products added to cart.', 'bulk-ordering'),
+            'products' => $added_names,
+        ]);
     }
+
+    // #region 🔄 Core Operations
 
     /**
      * Empties the current WooCommerce cart.
@@ -52,14 +57,16 @@ class B2B_Cart_Handler
     }
 
     /**
-     * Attempts to add all items to cart, returns list of failed product IDs.
+     * Attempts to add all items to cart.
+     * Returns a tuple: [failed product IDs, added product names].
      *
      * @param array $items
-     * @return array
+     * @return array [array<int>, array<string>]
      */
     private function process_cart_items(array $items): array
     {
         $errors = [];
+        $added  = [];
 
         foreach ($items as $item) {
             $product_id   = isset($item['product_id']) ? absint($item['product_id']) : 0;
@@ -71,17 +78,25 @@ class B2B_Cart_Handler
                 continue;
             }
 
-            $added = ($variation_id > 0)
+            $added_result = ($variation_id > 0)
                 ? WC()->cart->add_to_cart($product_id, $quantity, $variation_id, $attributes)
                 : WC()->cart->add_to_cart($product_id, $quantity);
 
-            if (!$added) {
+            if (!$added_result) {
                 $errors[] = $product_id;
+                continue;
             }
+
+            $product = wc_get_product($variation_id ?: $product_id);
+            $added[] = $product ? $product->get_name() : __('Unknown product', 'bulk-ordering');
         }
 
-        return $errors;
+        return [$errors, $added];
     }
+
+    // #endregion
+
+    // #region 🔍 Filter Endpoint
 
     /**
      * Registers AJAX endpoints.
@@ -149,6 +164,10 @@ class B2B_Cart_Handler
         return ob_get_clean();
     }
 
+    // #endregion
+
+    // #region 🔐 Security
+
     /**
      * Verifies a nonce.
      *
@@ -176,4 +195,6 @@ class B2B_Cart_Handler
             'debug_nonce_expected' => '🔐 (Value not shown to avoid confusion)',
         ]);
     }
+
+    // #endregion
 }

@@ -43,10 +43,20 @@ class B2B_Assets
         wp_enqueue_script(
             'b2b-bulk-ordering',
             B2B_PLUGIN_URL . 'assets/js/bulk-ordering.js',
-            [], // 👉 Add 'jquery' if needed
+            ['jquery'], // 👉 Add 'jquery' if needed
             B2B_PLUGIN_VERSION,
             true
         );
+
+        wp_enqueue_script(
+            'b2b-qty-handler',
+            B2B_PLUGIN_URL . 'assets/js/handlers/handleQuantityButtons.js',
+            [],
+            B2B_PLUGIN_VERSION,
+            true // Load in footer
+        );
+
+
 
         // 🛒 Ensure cart fragments are available (WooCommerce AJAX add-to-cart support)
         wp_enqueue_script('wc-cart-fragments');

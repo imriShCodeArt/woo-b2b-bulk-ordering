@@ -35,14 +35,36 @@
   border-bottom: 1px dashed #ccc;
   padding-bottom: 1rem;
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
+  align-items: center;
   gap: 0.5rem;
+  max-width: 450px;
 }
 
 .b2b-product-title {
   font-weight: 600;
   font-size: 1.1rem;
+  min-width: 150px;
+  flex-grow: 10;
 }
+
+.b2b-product-image {
+  width: 5em !important;
+  height: 5em !important;
+}
+
+.b2b-quantity-control {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.b2b-qty-btn {
+  padding: 4px 10px;
+  font-size: 16px;
+  cursor: pointer;
+}
+
 /* #endregion */
 
 /* #region 🔘 Inputs and Selects */
@@ -50,8 +72,10 @@
 .b2b-quantity-input {
   padding: 0.4rem;
   font-size: 1rem;
-  width: 100%;
-  max-width: 300px;
+  flex-shrink: 1;
+  width: auto !important;
+  max-width: 70px !important;
+  flex-grow: 1;
 }
 /* #endregion */
 
@@ -84,14 +108,11 @@
 /* #region 🧩 Responsive Layout (≥ 640px) */
 @media (min-width: 640px) {
   .b2b-product {
-    flex-direction: row;
-    align-items: center;
     gap: 1.5rem;
   }
 
   .b2b-product-title {
-    flex: 1;
-    min-width: 150px;
+    /* flex: 1; */
   }
 
   .b2b-variation-select-wrapper,
@@ -135,5 +156,42 @@
 
 .b2b-submit-fixed-wrapper .b2b-submit-button:hover {
   background-color: #005f87;
+}
+/* #endregion */
+
+/* #region 🔔 Toast Notifications */
+.b2b-toast {
+  position: fixed;
+  bottom: 2rem;
+  right: 2rem;
+  padding: 0.75rem 1.25rem;
+  border-radius: 4px;
+  color: #fff;
+  z-index: 9999;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+  font-weight: 500;
+  background-color: #0073aa;
+  animation: fadein 0.2s ease-in-out;
+}
+.b2b-toast.error {
+  background-color: #d63638;
+}
+.b2b-toast.warning {
+  background-color: #ffba00;
+  color: #000;
+}
+.b2b-toast.info {
+  background-color: #3c8dbc;
+}
+
+@keyframes fadein {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 /* #endregion */

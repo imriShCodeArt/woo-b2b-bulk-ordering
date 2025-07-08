@@ -8,8 +8,30 @@
  * @param {jQuery} $ - jQuery instance
  */
 import findMatchingVariationId from "../utils/findMatchingVariationId.js";
+import showToast from "../utils/showToast.js";
 
 export default function handleAddToCart($) {
+  /**
+   * Delegate increment/decrement button clicks using event delegation
+   */
+  $(document).on("click", ".b2b-qty-plus", function () {
+    const $input = $(this)
+      .closest(".b2b-quantity-control")
+      .find(".b2b-quantity-input");
+    const currentVal = parseInt($input.val(), 10) || 0;
+    $input.val(currentVal + 1).trigger("change");
+  });
+
+  $(document).on("click", ".b2b-qty-minus", function () {
+    const $input = $(this)
+      .closest(".b2b-quantity-control")
+      .find(".b2b-quantity-input");
+    const currentVal = parseInt($input.val(), 10) || 0;
+    if (currentVal > 0) {
+      $input.val(currentVal - 1).trigger("change");
+    }
+  });
+
   /**
    * Intercept form submission
    */
@@ -23,7 +45,8 @@ export default function handleAddToCart($) {
     $(".b2b-product").each(function () {
       const $product = $(this);
       const productId = parseInt($product.data("product-id"), 10);
-      const quantity = parseInt($product.find(".b2b-quantity-input").val(), 10) || 0;
+      const quantity =
+        parseInt($product.find(".b2b-quantity-input").val(), 10) || 0;
 
       // Skip if quantity not valid or missing product ID
       if (quantity <= 0 || !productId) return;
@@ -96,16 +119,28 @@ export default function handleAddToCart($) {
       success: function (response) {
         console.log("🧪 Add to cart success:", response);
 
+        // ⚠️ Handle error case first
         if (!response?.success) {
           alert(response?.data?.message || B2BOrderingData.i18n.addToCartError);
           return;
         }
 
-        // WooCommerce fragment refresh (cart totals, icons, etc.)
+        // ✅ Show a toast with the list of added product names
+        const productNames = response?.data?.products || [];
+        if (productNames.length > 0) {
+          const msg = `${
+            productNames.length
+          } item(s) added: ${productNames.join(", ")}`;
+          showToast($, msg, "success");
+        } else {
+          showToast($, "✅ Items added to cart.", "success");
+        }
+
+        // 🛒 Refresh WooCommerce cart fragments
         if (typeof wc_cart_fragments_params !== "undefined") {
           $(document.body).trigger("wc_fragment_refresh");
 
-          // Manual backup refresh (in case Woo fails to hook)
+          // 🔁 Manual backup refresh
           $.get(
             wc_cart_fragments_params.wc_ajax_url
               .toString()
@@ -118,7 +153,7 @@ export default function handleAddToCart($) {
           );
         }
 
-        // Trigger WooCommerce cart update event
+        // 🧩 Trigger WooCommerce event
         $(document.body).trigger("added_to_cart", [itemsToAdd]);
       },
 
