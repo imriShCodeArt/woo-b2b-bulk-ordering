@@ -1,125 +1,127 @@
-# 🛒 WooCommerce B2B Bulk Ordering
+🛒 WooCommerce B2B Bulk Ordering
+================================
 
-A lightweight and responsive bulk ordering system for WooCommerce, built for B2B and wholesale stores. Let your customers quickly add multiple products—including variable ones—to their cart from a single interface.
+A lightweight, responsive bulk ordering system for WooCommerce—built for B2B and wholesale workflows. Enables customers to quickly add multiple products (including variable products) to the cart from a single interface.
 
----
+* * *
 
-## 📦 Features
+📦 Features
+-----------
 
-- ✅ Shortcode-powered UI: `[b2b_bulk_ordering]`
-- ✅ Add multiple products to cart in one click
-- ✅ Fully compatible with variable products
-- ✅ AJAX-based cart processing with WooCommerce fragment refresh
-- ✅ Filter products by category (tag support planned)
-- ✅ Responsive layout with sticky CTA button
-- ✅ Theme override support for templates
-- ✅ Modular JS and PHP structure
-- ✅ Translation-ready (`.pot` file included)
+*   Shortcode-powered UI: `[b2b_bulk_ordering]`
+*   Add multiple products to cart in a single action
+*   Full support for variable products
+*   AJAX-based cart handling with WooCommerce fragment refresh
+*   Product filtering by category (tag support planned)
+*   Responsive layout with sticky CTA
+*   Template override support
+*   Modular PHP and JavaScript architecture
+*   Translation-ready (includes `.pot` file)
 
----
+* * *
 
-## 🚀 Getting Started
+🚀 Getting Started
+------------------
 
-### 1. Installation
+### 1\. Installation
 
-Clone or download this repo and place it in your `/wp-content/plugins/` directory:
+Clone or download the repository into your WordPress plugins directory:
 
-```bash
-git clone https://github.com/your-username/woo-b2b-bulk-ordering.git
-```
+    git clone https://github.com/<your-username>/woo-b2b-bulk-ordering.git
 
-Then activate it from your WordPress admin dashboard.
+Then activate the plugin from the WordPress admin dashboard.
 
----
+* * *
 
-### 2. Usage
+### 2\. Usage
 
-Add the following shortcode to any post or page:
+Add the shortcode to any post or page:
 
-```text
-[b2b_bulk_ordering]
-```
+    [b2b_bulk_ordering]
 
-That’s it! The interface will automatically render and load your store's products.
+The interface will render automatically and load products dynamically.
 
----
+* * *
 
-## 🧰 Developer Notes
+🧰 Developer Notes
+------------------
 
 ### File Structure
 
-```
-woo-b2b-bulk-ordering/
-├── assets/                 # CSS & JS
-│   ├── css/bulk-ordering.css
-│   └── js/
-│       ├── bulk-ordering.js
-│       ├── handlers/
-│       └── utils/
-├── includes/              # PHP Classes
-├── templates/             # Overridable HTML templates
-│   ├── bulk-ordering-ui.php
-│   └── partials/
-├── languages/             # .pot translation file
-├── woo-b2b-bulk-ordering.php
-```
+    woo-b2b-bulk-ordering/
+    ├── assets/
+    │   ├── css/bulk-ordering.css
+    │   └── js/
+    │       ├── bulk-ordering.js
+    │       ├── handlers/
+    │       └── utils/
+    ├── includes/
+    ├── templates/
+    │   ├── bulk-ordering-ui.php
+    │   └── partials/
+    ├── languages/
+    ├── woo-b2b-bulk-ordering.php
 
 ### Template Overrides
 
-To override a template, copy it to your theme:
+To override templates, copy them into your theme:
 
-```
-your-theme/
-└── woo-b2b-bulk-ordering/
-    └── bulk-ordering-ui.php
-```
+    your-theme/
+    └── woo-b2b-bulk-ordering/
+        └── bulk-ordering-ui.php
 
----
+* * *
 
-## 📚 Available Hooks
+📚 Available Hooks
+------------------
 
 ### PHP
 
-- `b2b_bulk_ordering_template`  
-  Override the default template path.
+*   `b2b_bulk_ordering_template`  
+    Override the default template path.
 
 ### JavaScript
 
-- `added_to_cart`  
-  Triggered after successful cart update.
+*   `added_to_cart`  
+    Triggered after a successful cart update.
 
----
+* * *
 
-## 🎯 Ideal Use Cases
+🎯 Use Cases
+------------
 
-- Wholesale shops
-- Internal order forms
-- Quick reordering portals
-- Restaurant supply, office supply, etc.
+*   Wholesale stores
+*   Internal ordering systems
+*   Rapid reordering interfaces
+*   Industry-specific supply portals (e.g. food, office, retail)
 
----
+* * *
 
-## 🧩 Planned Features
+🧩 Roadmap
+----------
 
-- [ ] Tag-based filtering
-- [ ] CSV product import/export
-- [ ] Order summary before submission
-- [ ] Settings UI in admin
+*   Tag-based product filtering
+*   CSV import/export
+*   Pre-submit order summary
+*   Admin configuration UI
 
----
+* * *
 
-## 📄 License
+📄 License
+----------
 
-MIT — use this freely in personal or commercial projects.
+MIT License. See `LICENSE` file for details.
 
----
+* * *
 
-## 🤝 Contributing
+🤝 Contributing
+---------------
 
-Pull requests are welcome! For major changes, please open an issue first to discuss what you’d like to change.
+Pull requests are welcome. For significant changes, open an issue first to discuss scope and approach.
 
----
+* * *
 
-## 🙌 Credits
+🙌 Credits
+----------
 
-Crafted with ❤️ for WooCommerce site builders focused on speed and usability.
+Built for WooCommerce environments where speed, efficiency, and usability are critical.
